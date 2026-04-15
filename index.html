@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Sueldos</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; background-color: #f0f2f5; padding: 20px; }
+        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 320px; text-align: center; margin-bottom: 20px; }
+        h2 { color: #333; margin-bottom: 20px; }
+        button { width: 100%; padding: 12px; margin: 10px 0; cursor: pointer; border: none; border-radius: 8px; background-color: #007bff; color: white; font-size: 16px; font-weight: bold; transition: 0.3s; }
+        button:hover { background-color: #0056b3; }
+        input { width: 90%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+        label { display: block; text-align: left; font-size: 12px; color: #666; margin-left: 5%; }
+        .hidden { display: none; }
+        .resultado { margin-top: 20px; padding: 15px; background-color: #e9f7ef; border-radius: 8px; color: #1e7e34; font-size: 18px; line-height: 1.5; border: 1px solid #c3e6cb; }
+        .volver { background-color: #6c757d; }
+        .config-btn { background-color: #f8f9fa; color: #333; border: 1px solid #ddd; font-size: 12px; }
+        .badge { background: #eee; padding: 2px 8px; border-radius: 10px; font-size: 11px; color: #555; }
+    </style>
+</head>
+<body>
+
+    <div id="menu-principal" class="container">
+        <h2>Calculadora de Sueldos</h2>
+        <button onclick="mostrarCalculadora('ENCARGADA')">ENCARGADA</button>
+        <button onclick="mostrarCalculadora('VENDEDORA')">VENDEDORA</button>
+        
+        <button class="config-btn" onclick="toggleConfig()">⚙️ Ajustar Valor Hora</button>
+        
+        <div id="configuracion" class="hidden" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+            <p><strong>Precio de la Hora:</strong></p>
+            <label>Hora Encargada $</label>
+            <input type="number" id="conf-h-enc" value="1500">
+            <label>Hora Vendedora $</label>
+            <input type="number" id="conf-h-ven" value="1000">
+        </div>
+    </div>
+
+    <div id="seccion-calculo" class="container hidden">
+        <h2 id="titulo-puesto"></h2>
+        <p id="info-comision" class="badge"></p>
+        
+        <input type="number" id="horas-trabajadas" placeholder="Horas trabajadas">
+        <input type="number" id="ventas-totales" placeholder="Ventas totales ($)">
+        
+        <button onclick="calcular()">CALCULAR TOTAL</button>
+        
+        <div id="resultado" class="resultado hidden"></div>
+        
+        <button class="volver" onclick="irAlInicio()">VOLVER</button>
+    </div>
+
+    <script>
+        // --- AQUÍ FIJÁS LAS COMISIONES ---
+        const COMISION_ENCARGADA = 0.015; // 
+        const COMISION_VENDEDORA = 0.005; // 
+
+        let puestoActual = "";
+
+        function toggleConfig() {
+            const conf = document.getElementById('configuracion');
+            conf.classList.toggle('hidden');
+        }
+
+        function mostrarCalculadora(puesto) {
+            puestoActual = puesto;
+            document.getElementById('menu-principal').classList.add('hidden');
+            document.getElementById('seccion-calculo').classList.remove('hidden');
+            document.getElementById('titulo-puesto').innerText = "Panel: " + puesto;
+            
+            // Mostrar la comisión fija en pantalla para que sepa qué está calculando
+            const comText = puesto === "ENCARGADA" ? (COMISION_ENCARGADA * 100) : (COMISION_VENDEDORA * 100);
+            document.getElementById('info-comision').innerText = "Comisión fija: " + comText + "%";
+        }
+
+        function calcular() {
+            const horas = parseFloat(document.getElementById('horas-trabajadas').value) || 0;
+            const ventas = parseFloat(document.getElementById('ventas-totales').value) || 0;
+            
+            let valorHora, porcentaje;
+
+            if(puestoActual === "ENCARGADA") {
+                valorHora = parseFloat(document.getElementById('conf-h-enc').value) || 0;
+                porcentaje = COMISION_ENCARGADA;
+            } else {
+                valorHora = parseFloat(document.getElementById('conf-h-ven').value) || 0;
+                porcentaje = COMISION_VENDEDORA;
+            }
+
+            const pagoHoras = horas * valorHora;
+            const pagoComision = ventas * porcentaje;
+            const total = pagoHoras + pagoComision;
+
+            const resDiv = document.getElementById('resultado');
+            resDiv.classList.remove('hidden');
+            resDiv.innerHTML = `
+                Pago Horas: $${pagoHoras.toLocaleString()}<br>
+                Comisión: $${pagoComision.toLocaleString()}<br>
+                <hr>
+                <strong>TOTAL: $${total.toLocaleString()}</strong>
+            `;
+        }
+
+        function irAlInicio() {
+            document.getElementById('menu-principal').classList.remove('hidden');
+            document.getElementById('seccion-calculo').classList.add('hidden');
+            document.getElementById('resultado').classList.add('hidden');
+            document.getElementById('horas-trabajadas').value = "";
+            document.getElementById('ventas-totales').value = "";
+        }
+    </script>
+</body>
+</html>
