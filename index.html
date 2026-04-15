@@ -31,9 +31,9 @@
         <div id="configuracion" class="hidden" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
             <p><strong>Precio de la Hora:</strong></p>
             <label>Hora Encargada $</label>
-            <input type="number" id="conf-h-enc" value="1500">
+            <input type="number" id="conf-h-enc" value="4000">
             <label>Hora Vendedora $</label>
-            <input type="number" id="conf-h-ven" value="1000">
+            <input type="number" id="conf-h-ven" value="3600">
         </div>
     </div>
 
@@ -53,8 +53,8 @@
 
     <script>
         // --- AQUÍ FIJÁS LAS COMISIONES ---
-        const COMISION_ENCARGADA = 0.015; // 
-        const COMISION_VENDEDORA = 0.005; // 
+        const COMISION_ENCARGADA = 0.005; // 0,5%
+        const COMISION_VENDEDORA = 0.01; // 1%
 
         let puestoActual = "";
 
